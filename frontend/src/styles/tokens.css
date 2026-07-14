@@ -1,0 +1,186 @@
+:root {
+  /* ------------------------------------------------------------------ */
+  /*  VGC Team Atlas — design tokens                                    */
+  /*  Clinical atlas register. OKLCH throughout.                        */
+  /*  Restrained strategy: primary + accent carry the brand,           */
+  /*  surfaces stay quiet, type does the hierarchy.                     */
+  /* ------------------------------------------------------------------ */
+
+  /*  Type families */
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo,
+    Consolas, monospace;
+
+  /*  Fixed-rem type scale (product register — no fluid scaling)       */
+  --step--1: 0.8125rem;   /* small labels, meta */
+  --step-0:  1rem;        /* body */
+  --step-1:  1.125rem;    /* h3 */
+  --step-2:  1.375rem;    /* h2 */
+  --step-3:  1.75rem;    /* h1 / page title */
+  --leading-tight: 1.2;
+  --leading-body: 1.55;
+  --leading-data: 1.35;
+  --tracking-tight: -0.025em;
+  --tracking-eyebrow: 0.08em;
+
+  /*  Spacing scale — 4px base rhythm */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+
+  /*  Radii — top out at 16px on cards per the codex-tell rule */
+  --radius-1: 4px;
+  --radius-2: 8px;
+  --radius-3: 12px;
+  --radius-pill: 999px;
+
+  /*  Motion — product register: 150–250ms, state-only */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);   /* ease-out-quint */
+  --t-fast: 150ms;
+  --t-mid:  220ms;
+  --t-slow: 280ms;
+
+  /*  Layout */
+  --filter-rail-w: 21rem;
+  --content-max:  72rem;
+
+  /*  z-index scale */
+  --z-dropdown: 20;
+  --z-sticky:   30;
+  --z-overlay:  40;
+  --z-dialog:   50;
+  --z-toast:    60;
+
+  font-family: var(--font-sans);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "cv05", "cv11", "ss01";
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* ------------------------------------------------------------------ */
+/*  LIGHT ATLAS                                                       */
+/* ------------------------------------------------------------------ */
+:root,
+:root[data-theme="light"] {
+  --bg:              oklch(1 0 0);
+  --surface:         oklch(0.965 0.004 258);
+  --surface-2:       oklch(0.94 0.006 258);
+  --surface-hover:   oklch(0.945 0.006 258);
+
+  --ink:             oklch(0.21 0.02 258);
+  --ink-strong:      oklch(0.16 0.02 258);
+  --muted:           oklch(0.50 0.018 258);
+  --muted-2:         oklch(0.50 0.018 258);  /* eyebrows carry info — kept at 4.5:1 */
+  --hair:            oklch(0.88 0.006 258);
+  --hair-strong:     oklch(0.82 0.008 258);
+
+  --primary:         oklch(0.52 0.18 258);
+  --primary-hover:   oklch(0.48 0.19 258);
+  --primary-active:  oklch(0.44 0.20 258);
+  --primary-soft:    oklch(0.94 0.04 258);
+  --primary-ink:     oklch(0.40 0.16 258);
+  --on-primary:      oklch(0.99 0 0);
+
+  --accent:          oklch(0.72 0.15 60);     /* amber */
+  --accent-hover:    oklch(0.67 0.16 60);
+  --accent-soft:     oklch(0.93 0.05 60);
+  --accent-ink:      oklch(0.45 0.12 60);
+  --on-accent:       oklch(1 0 0);
+
+  /*  State semantics */
+  --state-error:     oklch(0.55 0.21 25);
+  --state-error-soft: oklch(0.95 0.04 25);
+  --state-success:   oklch(0.55 0.16 145);
+  --state-warning:   oklch(0.68 0.16 65);
+
+  /*  Focus ring (visible against any bg) */
+  --focus-ring:     oklch(0.55 0.18 258);
+  --focus-ring-offset: oklch(1 0 0);
+
+  color-scheme: light;
+}
+
+/* ------------------------------------------------------------------ */
+/*  DARK ATLAS                                                        */
+/* ------------------------------------------------------------------ */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --bg:              oklch(0.13 0.005 258);
+    --surface:         oklch(0.17 0.007 258);
+    --surface-2:       oklch(0.21 0.008 258);
+    --surface-hover:   oklch(0.20 0.008 258);
+
+    --ink:             oklch(0.94 0.005 258);
+    --ink-strong:      oklch(0.98 0.004 258);
+    --muted:           oklch(0.70 0.012 258);
+    --muted-2:         oklch(0.70 0.012 258);
+    --hair:            oklch(0.28 0.008 258);
+    --hair-strong:     oklch(0.36 0.010 258);
+
+    --primary:         oklch(0.70 0.16 258);
+    --primary-hover:   oklch(0.74 0.17 258);
+    --primary-active:  oklch(0.64 0.18 258);
+    --primary-soft:    oklch(0.24 0.04 258);
+    --primary-ink:     oklch(0.78 0.13 258);
+    --on-primary:      oklch(0.13 0.005 258);  /* dark text on bright cobalt */
+
+    --accent:          oklch(0.78 0.14 60);
+    --accent-hover:    oklch(0.82 0.15 60);
+    --accent-soft:     oklch(0.28 0.06 60);
+    --accent-ink:      oklch(0.85 0.10 60);
+    --on-accent:       oklch(0.13 0.005 258);
+
+    --state-error:     oklch(0.70 0.18 25);
+    --state-error-soft: oklch(0.30 0.06 25);
+    --state-success:   oklch(0.72 0.15 145);
+    --state-warning:   oklch(0.78 0.14 65);
+
+    --focus-ring:     oklch(0.72 0.17 258);
+    --focus-ring-offset: oklch(0 0 0);
+
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg:              oklch(0.13 0.005 258);
+  --surface:         oklch(0.17 0.007 258);
+  --surface-2:       oklch(0.21 0.008 258);
+  --surface-hover:   oklch(0.20 0.008 258);
+
+  --ink:             oklch(0.94 0.005 258);
+  --ink-strong:      oklch(0.98 0.004 258);
+  --muted:           oklch(0.70 0.012 258);
+  --muted-2:         oklch(0.70 0.012 258);
+  --hair:            oklch(0.28 0.008 258);
+  --hair-strong:     oklch(0.36 0.010 258);
+
+  --primary:         oklch(0.70 0.16 258);
+  --primary-hover:   oklch(0.74 0.17 258);
+  --primary-active:  oklch(0.64 0.18 258);
+  --primary-soft:    oklch(0.24 0.04 258);
+  --primary-ink:     oklch(0.78 0.13 258);
+  --on-primary:      oklch(0.13 0.005 258);
+
+  --accent:          oklch(0.78 0.14 60);
+  --accent-hover:    oklch(0.82 0.15 60);
+  --accent-soft:     oklch(0.28 0.06 60);
+  --accent-ink:      oklch(0.85 0.10 60);
+  --on-accent:       oklch(0.13 0.005 258);
+
+  --state-error:     oklch(0.70 0.18 25);
+  --state-error-soft: oklch(0.30 0.06 25);
+  --state-success:   oklch(0.72 0.15 145);
+  --state-warning:   oklch(0.78 0.14 65);
+
+  --focus-ring:     oklch(0.72 0.17 258);
+  --focus-ring-offset: oklch(0 0 0);
+
+  color-scheme: dark;
+}

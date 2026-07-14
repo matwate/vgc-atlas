@@ -1,0 +1,136 @@
+.row {
+  display: grid;
+  grid-template-columns: 3.5rem 7rem 1fr 14px;
+  grid-gap: var(--space-3);
+  align-items: center;
+  padding: var(--space-3) var(--space-4);
+  background: var(--bg);
+  border: 1px solid var(--hair);
+  border-radius: var(--radius-3);
+  text-decoration: none;
+  color: var(--ink);
+  position: relative;
+  transition:
+    background var(--t-fast) var(--ease-out),
+    border-color var(--t-fast) var(--ease-out),
+    transform var(--t-fast) var(--ease-out),
+    box-shadow var(--t-fast) var(--ease-out);
+}
+.row + .row { margin-top: -1px; border-top-left-radius: 0; border-top-right-radius: 0; }
+.row + .row::before { border-radius: 0; }
+
+.row:hover {
+  background: var(--surface-hover);
+  border-color: var(--primary);
+  z-index: 2;
+}
+
+/* but render list as cards with continuous borders */
+.list { display: flex; flex-direction: column; }
+
+/* tighter: visually group cards as one segmented scroll region */
+.row:first-child { border-top-left-radius: var(--radius-3); border-top-right-radius: var(--radius-3); }
+.row:last-child  { border-bottom-left-radius: var(--radius-3); border-bottom-right-radius: var(--radius-3); }
+
+.row:hover .chevron { transform: translateX(2px); color: var(--primary); }
+
+.rank {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+}
+.rankLabel {
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted-2);
+  line-height: 1;
+  margin-bottom: 0.15rem;
+}
+.rankNum {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--step-1);
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.placement {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.1rem;
+  border-left: 1px solid var(--hair);
+  padding-left: var(--space-3);
+  margin-left: -0.25rem;
+}
+/* NOTE: avoid the side-stripe ban — this left hair is hairline (1px), neutral
+   gray, not colored, not an accent glyph. Reads as a column rule, not a stripe. */
+
+.topPct {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  font-size: var(--step-2);
+  line-height: 1;
+  color: var(--primary);
+  letter-spacing: -0.01em;
+}
+.placing {
+  font-size: var(--step--1);
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.dot { color: var(--muted-2); margin: 0 0.2em; }
+
+.main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+.tourney {
+  font-size: var(--step-0);
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.3;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.roster {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+}
+.rosterItem { list-style: none; }
+
+.chevron {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  color: var(--muted-2);
+  transition: color var(--t-fast) var(--ease-out),
+              transform var(--t-fast) var(--ease-out);
+}
+
+@media (max-width: 640px) {
+  .row {
+    grid-template-columns: 2.4rem 4rem 1fr 12px;
+    grid-gap: var(--space-2);
+    padding: var(--space-3);
+  }
+  .topPct { font-size: var(--step-1); }
+  .tourney { font-size: var(--step--1); }
+  .pokeCell { font-size: 0.65rem; padding: 0.18em 0.4em; }
+  .rankLabel { display: none; }
+  .rankNum { font-size: var(--step-0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .row, .chevron { transition: none; }
+}

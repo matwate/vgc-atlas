@@ -1,0 +1,37 @@
+.list { display: flex; flex-direction: column; gap: 0; }
+
+.row {
+  display: grid;
+  grid-template-columns: 3.5rem 7rem 1fr 14px;
+  grid-gap: var(--space-3);
+  align-items: center;
+  padding: var(--space-3) var(--space-4);
+  background: var(--bg);
+  border: 1px solid var(--hair);
+  border-radius: var(--radius-3);
+}
+.row + .row { margin-top: -1px; border-top-left-radius: 0; border-top-right-radius: 0; }
+.row:first-child { border-bottom-left-radius: 0; }
+.row:last-child  { border-bottom-left-radius: var(--radius-3); border-bottom-right-radius: var(--radius-3); }
+.row:first-child { border-top-left-radius: var(--radius-3); border-top-right-radius: var(--radius-3); border-bottom-left-radius: 0; }
+
+.skel { display: block; }
+
+.rankSkel { width: 1.4rem; height: 1.4rem; border-radius: var(--radius-1); }
+.topSkel   { width: 3rem; height: 1.4rem; border-radius: var(--radius-1); }
+.placingSkel { width: 4rem; height: 0.8rem; border-radius: var(--radius-1); margin-top: 0.3rem; }
+.tourneySkel { width: 14rem; max-width: 50%; height: 1.1rem; border-radius: var(--radius-1); }
+.pokeRow { display: flex; flex-wrap: wrap; gap: var(--space-1); margin-top: 0.5rem; }
+.pokeSkel { width: 4.5rem; height: 1rem; border-radius: var(--radius-1); }
+.pokeSkel:nth-child(2n) { width: 6rem; }
+.pokeSkel:nth-child(3n) { width: 5rem; }
+.pokeSkel:nth-child(4n) { width: 7.5rem; }
+
+@media (max-width: 640px) {
+  .row {
+    grid-template-columns: 2.4rem 4rem 1fr 12px;
+    grid-gap: var(--space-2);
+    padding: var(--space-3);
+  }
+  .tourneySkel { max-width: 80%; }
+}

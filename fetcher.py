@@ -1,0 +1,170 @@
+import json
+import loguru
+from loguru import logger
+import time
+import collections
+import httpx
+import jq
+from typing import List
+from pathlib import Path
+import csv
+
+
+PREFIX = "https://play.limitlesstcg.com/api"
+GAME = "VGC"
+FORMAT = "M-B"
+
+RATE_LIMIT_MAX = 50
+RATE_LIMIT_WINDOW = 5 * 60
+
+CHECK_SRC = Path("data/torunaments.csv") 
+OUTPUT = Path("data/jsonl")
+
+class RateLimiter:
+    def __init__(self, max_calls: int, window_seconds: int):
+        self.max_calls = max_calls
+        self.window = window_seconds
+        self.timestamps: collections.deque = collections.deque()
+
+    def _prune(self, now: float) -> None:
+        while self.timestamps and now - self.timestamps[0] >= self.window:
+            self.timestamps.popleft()
+
+    def acquire(self) -> None:
+        while True:
+            now = time.monotonic()
+            self._prune(now)
+            if len(self.timestamps) < self.max_calls:
+                self.timestamps.append(now)
+                return
+            sleep_for = self.window - (now - self.timestamps[0]) + 0.05
+            time.sleep(max(sleep_for, 0.1))
+
+
+_limiter = RateLimiter(RATE_LIMIT_MAX, RATE_LIMIT_WINDOW)
+
+
+def _get(url, **kwargs):
+    _limiter.acquire()
+    return httpx.get(url, **kwargs)
+
+
+def urlof(suffix: str):
+    return f"{PREFIX}{suffix}"
+
+
+def fetch_new_tourneys():
+
+
+    already_seen_ids = [] 
+    if Path('data/tournaments.csv').exists():
+        with open('data/tournaments.csv', mode = 'r') as f:
+
+            reader =  csv.DictReader(f, fieldnames= ['id', 'name', 'players'])
+            for row in reader:
+                already_seen_ids.append(row['id'])
+
+        
+    
+    tourneys = [] 
+
+    i = 1
+    while True:
+        params = {"game": GAME, "format": FORMAT, "page": i}
+        resp = _get(urlof("/tournaments"), params=params)
+        logger.info(f"Page {i} fetched")
+        if resp.status_code != 200:
+            logger.info(f"Stopping: page {i} returned {resp.status_code}")
+            break
+
+        page_tourneys = resp.json()
+        page_ids = [t["id"] for t in page_tourneys]
+
+        if not page_tourneys or len(page_tourneys) == 0 :
+            logger.info(f"Stopping: page {i} empty")
+            break
+        if any(x in already_seen_ids for x in page_ids):
+            logger.info("Reached already-seen tournaments, stopping")
+            tourneys.extend({  'id': x['id'], 'name': x['name'], 'players': x['players'] } for x in page_tourneys if x['id'] not in already_seen_ids)
+            break
+        tourneys.extend([  {'id': x['id'], 'name': x['name'], 'players': x['players'] } for x in page_tourneys])
+        i += 1
+    return tourneys
+ 
+
+def fetch_and_store_teams(tournaments: List[dict], teams_path: str = "data/teams.jsonl") -> None:
+    path = Path(teams_path)
+    done = set()
+    if path.exists():
+        for line in path.read_text().splitlines():
+            if line:
+                done.add(json.loads(line)["tournament_id"])
+
+    new_tourneys = [t for t in tournaments if t["id"] not in done]
+    logger.info(f"Will fetch {len(new_tourneys)} tournaments (skipped {len(done)} already done)")
+
+    with open(path, "a") as out:
+        for i, t in enumerate(new_tourneys, 1):
+            tid = t["id"]
+            resp = _get(urlof(f"/tournaments/{tid}/standings"))
+            logger.info(f"Tournament {i}/{len(new_tourneys)}: {t.get('name', tid)} ({t.get('players', '?')} players) -> {resp.status_code}")
+            resp.raise_for_status()
+            for player in resp.json():
+                player["tournament_id"] = tid
+                try:
+                        place = player["placing"],
+                except KeyError:
+                        place =  None 
+
+                try:
+                        team=  player["decklist"]
+                except KeyError:
+                        team = None
+
+                important = { "place":place,  "team": team, "tournament_id": tid,
+                              "tourney_name": t.get("name"), "tourney_players": t.get("players")}
+
+                out.write(json.dumps(important) + "\n")
+            out.flush()
+
+
+def update_new_tournaments(): 
+    
+    Path("data/teams.jsonl").unlink(missing_ok=True)
+
+
+    new_tourneys = fetch_new_tourneys()
+    if Path('data/tournaments.csv').exists():
+        with open('data/tournaments.csv', mode = 'r') as f:
+            writer = csv.DictWriter(f, fieldnames= ['id', 'name', 'players'])
+            writer.writeheader()
+            for tourney in new_tourneys:
+                writer.writerow(tourney)
+
+    logger.info(f"Found {len(new_tourneys)} new tournaments")
+
+    fetch_and_store_teams(new_tourneys)
+
+
+def rebuild_from_scratch(): 
+
+    
+    Path("data/teams.jsonl").unlink(missing_ok=True)
+    Path("data/tournaments.csv").unlink(missing_ok=True)
+
+    new_tourneys = fetch_new_tourneys()
+    if Path('data/tournaments.csv').exists():
+        with open('data/tournaments.csv', mode = 'r') as f:
+            writer = csv.DictWriter(f, fieldnames= ['id', 'name', 'players'])
+            writer.writeheader()
+            for tourney in new_tourneys:
+                writer.writerow(tourney)
+
+
+    logger.info(f"Found {len(new_tourneys)} new tournaments")
+
+    fetch_and_store_teams(new_tourneys)
+
+
+if __name__ == "__main__":
+    update_new_tournaments()

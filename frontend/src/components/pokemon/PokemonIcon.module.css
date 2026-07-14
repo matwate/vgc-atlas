@@ -1,0 +1,60 @@
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  flex-shrink: 0;
+  line-height: 0;
+  border-radius: var(--radius-2);
+  overflow: visible;
+}
+
+/* Subtle inset plate so transparent sprites read against either atlas surface.
+   Used for thumbnail rows where multiple sprites sit on a white-ish strip and
+   would otherwise merge into the background. Hero art in the team-detail view
+   intentionally omits `plate` so artwork carries its own presence. */
+.plate {
+  background: color-mix(in oklch, var(--surface-2) 60%, var(--bg));
+}
+.icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
+/* Pixel tier: square bucket; sprite artwork fills it. Add a soft outline for
+   crispness against light and dark surfaces (no extra background fill — the
+   sprite is transparent PNG and tinting it would obscure the silhouette). */
+.pixel img {
+  image-rendering: pixelated;          /* crisp, no auto-smoothing at small sizes */
+  image-rendering: crisp-edges;
+  filter: drop-shadow(0 1px 1px oklch(0 0 0 / 14%));
+}
+.pixel { padding: 2px; }
+
+/* Official art: same bucket but no padding so the art fills the well at large
+   sizes. Slight lift via drop-shadow; this is the "team sheet hero" treatment. */
+.art img {
+  filter:
+    drop-shadow(0 2px 3px oklch(0 0 0 / 16%))
+    drop-shadow(0 0 1px oklch(0 0 0 / 10%));
+}
+
+/* Letter-fill fallback when sprite URL 404s. Takes the same shape as the
+   <img>, so layout never shifts when the fallback swings in. */
+.fallback {
+  background: var(--surface-2);
+  border: 1px solid var(--hair-strong);
+  border-radius: var(--radius-2);
+  font-family: var(--font-mono);
+  letter-spacing: 0;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.fallbackText {
+  line-height: 1;
+}

@@ -1,0 +1,147 @@
+.slot {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: var(--bg);
+  border: 1px solid var(--hair);
+  border-radius: var(--radius-3);
+  position: relative;
+}
+
+.head {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.artWell { /* slide confirmation : the official-art chip sits at the head */
+}
+
+.meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+.indexRow {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5em;
+}
+.indexNum {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--step--1);
+  font-weight: 700;
+  color: var(--muted-2);
+  letter-spacing: 0;
+  background: var(--surface-2);
+  border-radius: var(--radius-1);
+  padding: 0.15em 0.4em;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.name {
+  font-size: var(--step-1);
+  font-weight: 700;
+  line-height: 1.1;
+  text-wrap: balance;
+  margin: 0;
+}
+.id {
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  color: var(--muted-2);
+}
+
+.teraWrap, .teraNone {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.2em;
+  min-width: 4.5rem;
+}
+.teraLabel {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted-2);
+  font-weight: 600;
+}
+.teraNoneMark {
+  font-family: var(--font-mono);
+  color: var(--muted);
+  font-size: var(--step--1);
+  padding: 0.15em 0.45em;
+  border-radius: var(--radius-pill);
+  background: var(--surface-2);
+}
+
+.fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-2) var(--space-4);
+  margin: 0;
+  padding: var(--space-3) 0;
+  border-top: 1px solid var(--hair);
+}
+.field {
+  display: flex;
+  flex-basis: auto;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 0;
+}
+.field dt {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted-2);
+  font-weight: 600;
+}
+.field dd {
+  margin: 0;
+  font-size: var(--step--1);
+  color: var(--ink);
+  font-weight: 500;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  max-width: 100%;
+}
+.field .mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+
+.moves {
+  list-style: none;
+  margin: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 var(--space-3);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--hair);
+}
+.move {
+  font-size: var(--step--1);
+  color: var(--ink);
+  padding: 0.35rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  line-height: 1.2;
+}
+.moveMarker {
+  width: 0.35em;
+  height: 0.35em;
+  border-radius: 50%;
+  background: var(--primary);
+  flex-shrink: 0;
+}
+
+@media (max-width: 480px) {
+  .fields { grid-template-columns: 1fr; }
+  .moves { grid-template-columns: 1fr; }
+  .head { grid-template-columns: auto 1fr; }
+  .teraWrap, .teraNone { grid-column: 2; align-items: flex-start; flex-direction: row; gap: var(--space-2); min-width: 0; }
+}

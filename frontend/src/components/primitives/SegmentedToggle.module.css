@@ -1,0 +1,31 @@
+.group {
+  display: inline-flex;
+  background: var(--surface-2);
+  border: 1px solid var(--hair);
+  border-radius: var(--radius-2);
+  padding: 2px;
+  gap: 0;
+  width: 100%;
+}
+.option {
+  flex: 1;
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font-size: var(--step--1);
+  font-weight: 600;
+  padding: 0.4em 0.75em;
+  border-radius: calc(var(--radius-2) - 2px);
+  transition:
+    color var(--t-fast) var(--ease-out),
+    background var(--t-fast) var(--ease-out);
+}
+.option:hover { color: var(--ink); }
+.option.active {
+  background: var(--bg);
+  color: var(--primary);
+  box-shadow:
+    0 1px 2px oklch(0 0 0 / 6%),
+    0 0 0 1px var(--hair-strong);
+}

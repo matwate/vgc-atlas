@@ -1,0 +1,30 @@
+.tera {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.28em;
+  font-size: var(--step--1);
+  font-weight: 600;
+  font-family: var(--font-mono);
+  letter-spacing: 0;
+  line-height: 1;
+  padding: 0.32em 0.7em;
+  border-radius: var(--radius-pill);
+  background: var(--tera-bg);
+  color: var(--tera-fg);
+  text-transform: capitalize;
+  white-space: nowrap;
+}
+
+.tera::before {
+  content: "";
+  width: 0.45em;
+  height: 0.45em;
+  border-radius: 50%;
+  background: var(--tera-fg);
+  opacity: 0.85;
+}
+
+.small {
+  font-size: 0.7rem;
+  padding: 0.22em 0.5em;
+}

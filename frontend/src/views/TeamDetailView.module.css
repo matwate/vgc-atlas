@@ -1,0 +1,152 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.hero {
+  border: 1px solid var(--hair);
+  background: var(--surface);
+  border-radius: var(--radius-3);
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.crumbRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  font-size: var(--step--1);
+  font-weight: 600;
+  color: var(--primary);
+  text-decoration: none;
+  padding: 0.3em 0;
+}
+.back:hover { color: var(--primary-hover); }
+
+.name {
+  font-size: var(--step-3);
+  font-weight: 700;
+  letter-spacing: var(--tracking-tight);
+  line-height: 1.12;
+  text-wrap: balance;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-4);
+  border-top: 1px solid var(--hair);
+  padding-top: var(--space-3);
+  margin: 0;
+}
+.stat { display: flex; flex-direction: column; gap: 0.1rem; min-width: 0; }
+.stat dt {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted-2);
+  font-weight: 600;
+}
+.statVal {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--step-2);
+  font-weight: 700;
+  color: var(--primary);
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+
+.teras {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  border-top: 1px solid var(--hair);
+  padding-top: var(--space-3);
+}
+.terasLabel {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted-2);
+  font-weight: 600;
+}
+.terasList {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.teraItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  padding: 0.15em 0.55em 0.15em 0.15em;
+  background: var(--surface-2);
+  border-radius: var(--radius-pill);
+}
+.terasWho {
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  color: var(--muted);
+  letter-spacing: 0;
+}
+
+.sheet {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--space-3);
+}
+
+/* ---------- skeleton ---------- */
+.skeletonLayout {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+.skel { background: var(--surface-hover); border-radius: var(--radius-1); animation: shimmer 1.4s ease-in-out infinite; }
+.skelHero { height: 14rem; border-radius: var(--radius-3); }
+.skelSlot {
+  border: 1px solid var(--hair);
+  border-radius: var(--radius-3);
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.skelHead {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: var(--space-3);
+  align-items: center;
+}
+.skelIdx   { width: 1.5rem; height: 1.5rem; }
+.skelName  { width: 8rem; height: 1.25rem; }
+.skelTera  { width: 5rem; height: 1.5rem; border-radius: var(--radius-pill); }
+.skelFields { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); }
+.skelField { display: flex; flex-direction: column; gap: 0.2rem; }
+.skelLabel { width: 3rem; height: 0.7rem; }
+.skelValue { width: 6rem; height: 0.8rem; }
+.skelMoves { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); }
+.skelMove  { width: 5rem; height: 0.8rem; }
+
+@media (max-width: 720px) {
+  .stats { grid-template-columns: 1fr 1fr; }
+  .stat:nth-child(3) { display: none; }
+  .sheet { grid-template-columns: 1fr; }
+}
+@media (max-width: 480px) {
+  .stats { grid-template-columns: 1fr; }
+  .hero { padding: var(--space-4); }
+  .name { font-size: var(--step-2); }
+}

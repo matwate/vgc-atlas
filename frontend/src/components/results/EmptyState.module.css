@@ -1,0 +1,109 @@
+.wrap, .welcome {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: var(--space-7) var(--space-4);
+  gap: var(--space-3);
+  border: 1px solid var(--hair);
+  background: var(--surface);
+  border-radius: var(--radius-3);
+}
+
+.welcomeInner {
+  max-width: 48rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.emo {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  background: var(--surface-2);
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.title {
+  font-size: var(--step-2);
+  font-weight: 600;
+}
+
+.body {
+  color: var(--muted);
+  font-size: var(--step-0);
+  max-width: 50ch;
+  line-height: var(--leading-body);
+}
+.body b { color: var(--ink); }
+.body em { font-style: italic; }
+
+.suggestions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+  width: 100%;
+}
+.label {
+  font-size: var(--step--1);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-eyebrow);
+  color: var(--muted-2);
+  font-weight: 600;
+}
+.suggRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  justify-content: center;
+  justify-items: flex-start;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.sugg {
+  appearance: none;
+  border: 1px solid var(--hair);
+  background: var(--bg);
+  color: var(--ink);
+  border-radius: var(--radius-pill);
+  /* Move left padding up slightly so the sprite visually centers with thelabel. */
+  padding: 0.3em 0.7em 0.3em 0.3em;
+  font-size: var(--step--1);
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45em;
+  transition:
+    background var(--t-fast) var(--ease-out),
+    border-color var(--t-fast) var(--ease-out),
+    color var(--t-fast) var(--ease-out),
+    transform var(--t-fast) var(--ease-out);
+}
+.sugg:hover {
+  background: var(--primary-soft);
+  border-color: var(--primary);
+  color: var(--primary-ink);
+  transform: translateY(-1px);
+}
+.suggLabel {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.clear {
+  margin-top: var(--space-3);
+  font-size: var(--step--1);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  color: var(--primary);
+}

@@ -1,0 +1,39 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-2) 0 var(--space-4);
+}
+.left {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  min-width: 0;
+}
+.title {
+  font-size: var(--step-1);
+  font-weight: 600;
+}
+.railToggle {
+  display: none;
+  appearance: none;
+  border: 1px solid var(--hair-strong);
+  background: var(--bg);
+  color: var(--ink);
+  font-size: var(--step--1);
+  font-weight: 600;
+  padding: 0.45em 0.85em;
+  border-radius: var(--radius-2);
+  align-items: center;
+  gap: 0.4em;
+}
+.railToggle:hover {
+  background: var(--primary-soft);
+  border-color: var(--primary);
+  color: var(--primary-ink);
+}
+
+@media (max-width: 880px) {
+  .railToggle { display: inline-flex; }
+}
