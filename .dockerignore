@@ -1,0 +1,49 @@
+# VCS
+.git
+.gitignore
+.gitattributes
+
+# Python caches / build artifacts
+__pycache__/
+**/__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info/
+.venv/
+venv/
+
+# Nix
+result
+result-*
+flake.lock
+.direnv/
+.envrc
+
+# Docker (don't ship the files used to build the image itself)
+Dockerfile
+.dockerignore
+docker-compose.yml
+Caddyfile.internal
+entrypoint.sh
+
+# Frontend build state — rebuilt entirely in stage 2
+frontend/node_modules/
+frontend/dist/
+
+# Backend runtime state — rebuilt in-container from teams.jsonl on first boot
+data/teams.db
+data/teams.db.new
+data/teams.db-wal
+data/teams.db-shm
+data/teams-flat.csv
+
+# Test fixtures / scratch
+test.json
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+*.swp
