@@ -12,7 +12,7 @@ import csv
 
 PREFIX = "https://play.limitlesstcg.com/api"
 GAME = "VGC"
-FORMAT = "M-B"
+FORMAT = "M-C"
 
 RATE_LIMIT_MAX = 50
 RATE_LIMIT_WINDOW = 5 * 60

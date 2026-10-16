@@ -39,18 +39,27 @@
           cp -r scripts $out/share/vgc-atlas/
         '';
       };
+      # Serves the API under /api and, when VGC_ATLAS_FRONTEND is set, the SPA at /.
+      server = withFrontend: pkgs.writeShellApplication {
+        name = "vgc-atlas-server";
+        runtimeInputs = [ pythonEnv ];
+        text = ''
+          cd "''${VGC_ATLAS_ROOT:-.}"
+          ${lib.optionalString withFrontend ''export VGC_ATLAS_FRONTEND="${frontend}"''}
+          exec uvicorn api:app --host 0.0.0.0 --port "''${PORT:-8000}"
+        '';
+      };
     in {
       packages.${system} = { inherit frontend backend; default = frontend; };
-      apps.${system}.backend = {
-        type = "app";
-        program = "${pkgs.writeShellApplication {
-          name = "vgc-atlas-backend";
-          runtimeInputs = [ pythonEnv ];
-          text = ''
-            cd "''${VGC_ATLAS_ROOT:-.}"
-            exec uvicorn api:app --host 0.0.0.0 --port "''${PORT:-8000}"
-          '';
-        }}/bin/vgc-atlas-backend";
+      apps.${system} = {
+        default = {
+          type = "app";
+          program = "${server true}/bin/vgc-atlas-server";
+        };
+        backend = {
+          type = "app";
+          program = "${server false}/bin/vgc-atlas-server";
+        };
       };
     };
 }

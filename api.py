@@ -3,13 +3,15 @@
 Run:
     uvicorn api:app --host 127.0.0.1 --port 8000
 
-Endpoints:
-    GET /search        — mirror of the CLI flags, returns JSON teams
-    GET /team/{id}     — full slot breakdown of one team
-    GET /stats         — dataset stats (teams, tournaments, top pokemon)
-    GET /catalog/{kind} — canonical slugs for comboboxes
+Endpoints (all under /api):
+    GET /api/search        — mirror of the CLI flags, returns JSON teams
+    GET /api/team/{id}     — full slot breakdown of one team
+    GET /api/stats         — dataset stats (teams, tournaments, top pokemon)
+    GET /api/catalog/{kind} — canonical slugs for comboboxes
                           kind ∈ {pokemon, moves, items, abilities, teras, natures}
-    POST /rebuild      — trigger an immediate store rebuild (atomic swap)
+    POST /api/rebuild      — trigger an immediate store rebuild (atomic swap)
+
+Set VGC_ATLAS_FRONTEND to a built frontend directory to also serve the SPA at /.
 
 A BackgroundTasks loop rebuilds data/teams.db from data/teams.jsonl every
 REFRESH_INTERVAL_SECONDS so the API keeps serving fresh tournament data
@@ -21,11 +23,15 @@ import fetcher
 
 import asyncio
 import functools
+import os
 from pathlib import Path
 from typing import Optional
 
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import APIRouter, FastAPI, HTTPException, Query
 from fastapi.concurrency import run_in_threadpool
+from fastapi.responses import Response
+from fastapi.staticfiles import StaticFiles
+from starlette.exceptions import HTTPException as StarletteHTTPException
 
 import scripts.rebuild_store as rebuilder
 import scripts.fetch_new_data as fetcher
@@ -99,6 +105,7 @@ async def _rebuild_loop(app: FastAPI) -> None:
 # App
 # --------------------------------------------------------------------------- #
 app = FastAPI(title="VGC Team Search API", version="0.1.0")
+router = APIRouter()
 
 
 @app.on_event("startup")
@@ -111,7 +118,7 @@ async def _startup() -> None:
     asyncio.create_task(_rebuild_loop(app))
 
 
-@app.get("/search")
+@router.get("/search")
 async def search(
     pokemon: list[str] = Query(default=[], alias="pokemon", description="Pokémon slug; repeatable."),
     pokemon_mode: MatchMode = Query(default=MatchMode.all),
@@ -176,7 +183,7 @@ async def search(
     return payload
 
 
-@app.get("/team/{team_id}")
+@router.get("/team/{team_id}")
 async def team_detail(team_id: str):
     store = _fresh_store()
     t = await run_in_threadpool(store.get_team, team_id)
@@ -185,7 +192,7 @@ async def team_detail(team_id: str):
     return team_to_dict(t)
 
 
-@app.get("/stats")
+@router.get("/stats")
 async def stats(top: int = Query(default=20, ge=1, le=100)):
     store = _fresh_store()
     s = await run_in_threadpool(store.stats, top)
@@ -196,14 +203,14 @@ async def stats(top: int = Query(default=20, ge=1, le=100)):
     }
 
 
-@app.get("/catalog/{kind}")
+@router.get("/catalog/{kind}")
 async def catalog(kind: str):
     if kind not in {"pokemon", "moves", "items", "abilities", "teras", "natures"}:
         raise HTTPException(status_code=400, detail=f"unknown catalog kind: {kind}")
     return {"kind": kind, "values": _catalog_cached(kind)}
 
 
-@app.post("/rebuild")
+@router.post("/rebuild")
 async def rebuild_now():
     """Trigger an immediate store rebuild (atomic swap)."""
     await run_in_threadpool(rebuilder.build, rebuilder.SRC, rebuilder.DST)
@@ -211,12 +218,35 @@ async def rebuild_now():
     return {"ok": True, "db": str(rebuilder.DST)}
 
 
-@app.get("/health")
+@router.get("/health")
 async def health():
     return {
         "ok": DEFAULT_DB.exists(),
         "db": str(DEFAULT_DB),
     }
+
+
+# --------------------------------------------------------------------------- #
+# Mounting — API under /api, the built frontend (if any) at /
+# --------------------------------------------------------------------------- #
+app.include_router(router, prefix="/api")
+
+
+class SPAFiles(StaticFiles):
+    """Serve index.html for unknown paths so BrowserRouter deep links work."""
+
+    async def get_response(self, path: str, scope) -> Response:
+        try:
+            return await super().get_response(path, scope)
+        except StarletteHTTPException as e:
+            if e.status_code != 404:
+                raise
+            return await super().get_response("index.html", scope)
+
+
+FRONTEND_DIR = os.environ.get("VGC_ATLAS_FRONTEND")
+if FRONTEND_DIR:
+    app.mount("/", SPAFiles(directory=FRONTEND_DIR, html=True), name="ui")
 
 
 if __name__ == "__main__":
