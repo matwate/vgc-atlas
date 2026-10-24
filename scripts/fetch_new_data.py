@@ -7,7 +7,6 @@ import httpx
 import jq
 from typing import List
 from pathlib import Path
-import csv
 
 
 PREFIX = "https://play.limitlesstcg.com/api"
@@ -17,7 +16,6 @@ FORMAT = "M-C"
 RATE_LIMIT_MAX = 50
 RATE_LIMIT_WINDOW = 5 * 60
 
-CHECK_SRC = Path("data/torunaments.csv") 
 OUTPUT = Path("data/jsonl")
 
 class RateLimiter:
@@ -54,19 +52,9 @@ def urlof(suffix: str):
 
 
 def fetch_new_tourneys():
-
-
-    already_seen_ids = [] 
-    if Path('data/tournaments.csv').exists():
-        with open('data/tournaments.csv', mode = 'r') as f:
-
-            reader =  csv.DictReader(f, fieldnames= ['id', 'name', 'players'])
-            for row in reader:
-                already_seen_ids.append(row['id'])
-
-        
-    
-    tourneys = [] 
+    # Lists every tournament in the format; fetch_and_store_teams skips the ones
+    # already in teams.jsonl. Only a few pages, and it backfills any gaps.
+    tourneys = []
 
     i = 1
     while True:
@@ -78,14 +66,8 @@ def fetch_new_tourneys():
             break
 
         page_tourneys = resp.json()
-        page_ids = [t["id"] for t in page_tourneys]
-
-        if not page_tourneys or len(page_tourneys) == 0 :
+        if not page_tourneys:
             logger.info(f"Stopping: page {i} empty")
-            break
-        if any(x in already_seen_ids for x in page_ids):
-            logger.info("Reached already-seen tournaments, stopping")
-            tourneys.extend({  'id': x['id'], 'name': x['name'], 'players': x['players'] } for x in page_tourneys if x['id'] not in already_seen_ids)
             break
         tourneys.extend([  {'id': x['id'], 'name': x['name'], 'players': x['players'] } for x in page_tourneys])
         i += 1
@@ -109,6 +91,7 @@ def fetch_and_store_teams(tournaments: List[dict], teams_path: str = "data/teams
             resp = _get(urlof(f"/tournaments/{tid}/standings"))
             logger.info(f"Tournament {i}/{len(new_tourneys)}: {t.get('name', tid)} ({t.get('players', '?')} players) -> {resp.status_code}")
             resp.raise_for_status()
+            lines = []
             for player in resp.json():
                 player["tournament_id"] = tid
                 try:
@@ -124,13 +107,12 @@ def fetch_and_store_teams(tournaments: List[dict], teams_path: str = "data/teams
                 important = { "place":place,  "team": team, "tournament_id": tid,
                               "tourney_name": t.get("name"), "tourney_players": t.get("players")}
 
-                out.write(json.dumps(important) + "\n")
+                lines.append(json.dumps(important) + "\n")
+            out.write("".join(lines))
             out.flush()
 
 
 def update_new_tournaments(): 
-    
-    Path("data/teams.jsonl").unlink(missing_ok=True)
 
     new_tourneys = fetch_new_tourneys()
 
@@ -143,7 +125,6 @@ def rebuild_from_scratch():
 
     
     Path("data/teams.jsonl").unlink(missing_ok=True)
-    Path("data/tournaments.csv").unlink(missing_ok=True)
 
     new_tourneys = fetch_new_tourneys()
 
